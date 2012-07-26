@@ -18,7 +18,7 @@ if sys.argv[-1] == 'publish':
 
 settings.update(
     name='django-heroku-mongoify',
-    version='0.1.0',
+    version='0.2.0',
     description='Friendly MongoDB for Django on Heroku',
     long_description=open('README.rst').read(),
     author='Andy Dirnberger',

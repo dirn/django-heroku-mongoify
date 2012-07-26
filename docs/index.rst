@@ -1,4 +1,4 @@
-django-heroku-mongoify 0.1.0
+django-heroku-mongoify 0.2.0
 ===================================
 
 .. image:: https://secure.travis-ci.org/dirn/django-heroku-mongoify.png?branch=master
