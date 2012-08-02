@@ -2,6 +2,8 @@
 django-heroku-mongoify: Friendly MongoDB for Django on Heroku
 =============================================================
 
+.. image:: https://secure.travis-ci.org/dirn/django-heroku-mongoify.png?branch=master
+
 A user-friendly method to configure Django projects on Heroku to use MongoDB.
 
 Inspired by the work of `Randall Degges`_.
