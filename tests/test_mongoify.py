@@ -23,182 +23,83 @@ class MongoifyTest(unittest.TestCase):
         self.mongolab = \
             'mongodb://mongolab:password@example.mongolab.com:27017/test'
 
-    def test_default(self):
-        """Test passing a default value"""
+        # If the provider URLs already exist in the environment,
+        # back them up and delete them.
         if 'MONGOHQ_URL' in os.environ:
-            tmp1 = os.environ['MONGOHQ_URL']
+            self.MONGOHQ_URL = os.environ['MONGOHQ_URL']
             del os.environ['MONGOHQ_URL']
         else:
-            tmp1 = None
+            self.MONGOHQ_URL = None
         if 'MONGOLAB_URI' in os.environ:
-            tmp2 = os.environ['MONGOLAB_URI']
+            self.MONGOLAB_URI = os.environ['MONGOLAB_URI']
             del os.environ['MONGOLAB_URI']
         else:
-            tmp2 = None
+            self.MONGOLAB_URI = None
 
+    def tearDown(self):
+        # Restore any provider URLs to the environment or remove any
+        # temporary ones left over from testing.
+        if self.MONGOHQ_URL is not None:
+            os.environ['MONGOHQ_URL'] = self.MONGOHQ_URL
+        elif 'MONGOHQ_URL' in os.environ:
+            del os.environ['MONGOHQ_URL']
+        if self.MONGOLAB_URI is not None:
+            os.environ['MONGOLAB_URI'] = self.MONGOLAB_URI
+        elif 'MONGOLAB_URI' in os.environ:
+            del os.environ['MONGOLAB_URI']
+
+    def test_default(self):
+        """Test passing a default value"""
         connection = mongoify(default=self.localhost)
-
-        # Make sure to clean up the settings
-        if tmp1 is not None:
-            os.environ['MONGOHQ_URL'] = tmp1
-        if tmp2 is not None:
-            os.environ['MONGOLAB_URI'] = tmp2
 
         self.assertEqual(connection, self.localhost)
 
     def test_no_default(self):
         """Test passing no default value"""
-        if 'MONGOHQ_URL' in os.environ:
-            tmp1 = os.environ['MONGOHQ_URL']
-            del os.environ['MONGOHQ_URL']
-        else:
-            tmp1 = None
-        if 'MONGOLAB_URI' in os.environ:
-            tmp2 = os.environ['MONGOLAB_URI']
-            del os.environ['MONGOLAB_URI']
-        else:
-            tmp2 = None
-
         connection = mongoify()
-
-        # Make sure to clean up the settings
-        if tmp1 is not None:
-            os.environ['MONGOHQ_URL'] = tmp1
-        if tmp2 is not None:
-            os.environ['MONGOLAB_URI'] = tmp2
 
         self.assertTrue(connection is None)
 
     def test_mongohq(self):
         """Test using MONGOHQ_URL"""
-        if 'MONGOHQ_URL' in os.environ:
-            tmp1 = os.environ['MONGOHQ_URL']
-        else:
-            tmp1 = None
-        if 'MONGOLAB_URI' in os.environ:
-            tmp2 = os.environ['MONGOLAB_URI']
-            del os.environ['MONGOLAB_URI']
-        else:
-            tmp2 = None
-
         os.environ['MONGOHQ_URL'] = self.mongohq
 
         connection = mongoify()
-
-        # Make sure to clean up the setting
-        if tmp1 is None:
-            del os.environ['MONGOHQ_URL']
-        else:
-            os.environ['MONGOHQ_URL'] = tmp1
-        if tmp2 is not None:
-            os.environ['MONGOLAB_URI'] = tmp2
 
         self.assertEqual(connection, self.mongohq)
 
     def test_mongohq_trumps_all(self):
         """Test with all possibilities set"""
-        if 'MONGOHQ_URL' in os.environ:
-            tmp1 = os.environ['MONGOHQ_URL']
-        else:
-            tmp1 = None
-        if 'MONGOLAB_URI' in os.environ:
-            tmp2 = os.environ['MONGOLAB_URI']
-        else:
-            tmp2 = None
-
         os.environ['MONGOHQ_URL'] = self.mongohq
         os.environ['MONGOLAB_URI'] = self.mongolab
 
         connection = mongoify()
-
-        # Make sure to clean up the settings
-        if tmp1 is None:
-            del os.environ['MONGOHQ_URL']
-        else:
-            os.environ['MONGOHQ_URL'] = tmp1
-        if tmp2 is None:
-            del os.environ['MONGOLAB_URI']
-        else:
-            os.environ['MONGOLAB_URI'] = tmp2
 
         self.assertEqual(connection, self.mongohq)
 
     def test_mongohq_trumps_default(self):
         """Test using MONGOHQ_URL with a default"""
-        if 'MONGOHQ_URL' in os.environ:
-            tmp1 = os.environ['MONGOHQ_URL']
-        else:
-            tmp1 = None
-        if 'MONGOLAB_URI' in os.environ:
-            tmp2 = os.environ['MONGOLAB_URI']
-            del os.environ['MONGOLAB_URI']
-        else:
-            tmp2 = None
-
         os.environ['MONGOHQ_URL'] = self.mongohq
 
         connection = mongoify(default=self.localhost)
-
-        # Make sure to clean up the setting
-        if tmp1 is None:
-            del os.environ['MONGOHQ_URL']
-        else:
-            os.environ['MONGOHQ_URL'] = tmp1
-        if tmp2 is not None:
-            os.environ['MONGOLAB_URI'] = tmp2
 
         self.assertEqual(connection, self.mongohq)
 
     def test_mongolab(self):
         """Test using MONGOLAB_URI"""
-        if 'MONGOHQ_URL' in os.environ:
-            tmp1 = os.environ['MONGOHQ_URL']
-            del os.environ['MONGOHQ_URL']
-        else:
-            tmp1 = None
-        if 'MONGOLAB_URI' in os.environ:
-            tmp2 = os.environ['MONGOLAB_URI']
-        else:
-            tmp2 = None
-
         os.environ['MONGOLAB_URI'] = self.mongolab
 
         connection = mongoify()
-
-        # Make sure to clean up the setting
-        if tmp1 is not None:
-            os.environ['MONGOLAB_URI'] = tmp1
-        if tmp2 is None:
-            del os.environ['MONGOLAB_URI']
-        else:
-            os.environ['MONGOLAB_URI'] = tmp2
 
         self.assertEqual(connection, self.mongolab)
 
     def test_mongolab_trumps_default(self):
         """Test using MONGOLAB_URI with a default"""
-        if 'MONGOHQ_URL' in os.environ:
-            tmp1 = os.environ['MONGOHQ_URL']
-            del os.environ['MONGOHQ_URL']
-        else:
-            tmp1 = None
-        if 'MONGOLAB_URI' in os.environ:
-            tmp2 = os.environ['MONGOLAB_URI']
-        else:
-            tmp2 = None
-
         os.environ['MONGOLAB_URI'] = self.mongolab
 
         connection = mongoify(default=self.localhost)
 
         # Make sure to clean up the setting
-        if tmp1 is not None:
-            os.environ['MONGOLAB_URI'] = tmp1
-        if tmp2 is None:
-            del os.environ['MONGOLAB_URI']
-        else:
-            os.environ['MONGOLAB_URI'] = tmp2
-
         self.assertEqual(connection, self.mongolab)
 
 if __name__ == '__main__':
