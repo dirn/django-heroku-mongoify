@@ -10,6 +10,7 @@ Inspired by the work of `Randall Degges`_.
 
 .. _Randall Degges: https://github.com/rdegges
 
+
 Usage
 =====
 
@@ -23,13 +24,32 @@ Full documentation can be found on `Read the Docs`_.
 
 .. _Read the Docs: http://readthedocs.org/docs/django-heroku-mongoify/en/latest/
 
+
 Installation
 ============
 
-Installing django-heroku-mongoify is easy::
+To install the latest version of django-heroku-mongoify::
 
-    pip install django-heroku-mongoify
+    $ pip install django-heroku-mongoify
 
-or download the source and run::
+or, if you must::
 
-    python setup.py install
+    $ easy_install django-heroku-mongoify
+
+To install the latest development version::
+
+    $ git clone git@github.com:dirn/django-heroku-mongoify.git
+    $ cd django-heroku-mongoify
+    $ python setup.py install
+
+
+Changelog
+=========
+
+- 0.2.0:
+  - THIS RELEASE IS NOT BACKWARDS COMPATIBLE
+  - ``mongoify()`` now returns a ``dict`` of all URIs found in the
+  environment settings.
+
+- 0.1.0:
+  - Initial release

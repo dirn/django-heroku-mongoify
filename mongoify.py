@@ -4,39 +4,75 @@
 
 import os
 
-MONGO_URLS = (
-    'MONGOHQ_URL',
-    'MONGOLAB_URI',
-)
+__all__ = ('mongoify',)
 
 
 def mongoify(default=None):
-    """Returns URL based on environment settings.
+    """Returns a dictionary of URIs based on environment settings.
 
-    :param default: A URL for a MongoDB database.
+    This method will look for MongoDB URI connection strings in the
+    environment settings. It will first check for ``MONGO_URI``. If this
+    setting is found, it will be in the result ``dict`` as the
+    ``default`` key. The method will then iterate through the
+    settings looking for any additional URI connection strings. Any that
+    are found will be added to the result ``dict``.
+
+    In the event that ``MONGO_URI`` was not found, the first URI
+    connection string encountered will be used as the ``default`` key.
+    This URI will appear twice.
+
+    In the event that ``MONGO_URI`` was not found and no other URI
+    connection strings were not found, the value provided through the
+    ``default`` argument will be used as the ``default`` key.
+
+    :param default: A connection string URI for a MongoDB database.
     :type default: str.
-    :returns: dict -- A URL that can be used for a ``pymongo.Connection``.
+    :returns: dict -- connection string URIs that can be used with
+              ``pymongo.MongoClient``.
 
-    Supported providers:
-
-    - MongoHQ (MONGOHQ_URL)
-    - MongoLab (MONGOLAB_URI)
-
-    Other MongoDB hosts can be utilized by passing the URL as ``default``::
-
-        mongoify(default='mongodb://localhost')
-
+    .. versionchanged:: 0.2.0
+       ``mongoify()`` now returns a ``dict`` containing all URIs
     .. versionadded:: 0.1.0
     """
-    url = None
-    # If any of the supported URL environment variables exist, use the first
-    # one defined in `MONGO_URLS`.
-    urls = (os.getenv(url) for url in MONGO_URLS if os.getenv(url))
-    for url in urls:
-        break
 
-    # If no supported URLs exist and a default is provided, use it.
-    if not url and default is not None:
-        url = default
+    uris = {}
 
-    return url
+    # If the MONGO_URI key exists in the environment settings, it should
+    # be considered the default.
+    if 'MONGO_URI' in os.environ:
+        uris['default'] = os.environ['MONGO_URI']
+
+    # Loop through all other environment settings and look for URI
+    # connection strings. If any are found, add them to the dict.
+    for k, v in os.environ.items():
+        if v.startswith('mongodb://'):
+            if k == 'MONGO_URI':
+                continue
+
+            # Make the dictionary key a bit more human friendly. (I
+            # totally ripped this off from postgresify, except for the
+            # ugly try/excepts, those are mine.)
+            key = k.split('_')
+            try:
+                key.remove('URI')
+            except ValueError:
+                pass
+            try:
+                key.remove('URL')
+            except ValueError:
+                pass
+            key = '_'.join(key)
+
+            uris[key] = v
+
+            # In the even that MONGO_URI wasn't found, the first URI
+            # encountered should be used as the default.
+            if 'default' not in uris:
+                uris['default'] = v
+
+    # If no URIs exist in the environment settings and a default was
+    # provided, use it.
+    if not ('default' in uris or default is None):
+        uris['default'] = default
+
+    return uris
