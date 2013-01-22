@@ -56,6 +56,6 @@ class MongoifyTest(unittest.TestCase):
 
         uris = mongoify()
 
-        self.assertIn('default', uris)
+        self.assertTrue('default' in uris)
         self.assertEqual(uris['OTHER_MONGO'], 'mongodb://localhost/other')
         self.assertEqual(uris['ANOTHER_MONGO'], 'mongodb://localhost/another')

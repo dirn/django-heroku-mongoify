@@ -4,7 +4,8 @@ python:
   - 2.7
   - 3.1
   - 3.2
+  - pypy
 install:
-  - pip install nose
+  - pip install -r tests/requirements.txt
   - pip install .
-script: make test
+script: nosetests -q tests

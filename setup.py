@@ -4,10 +4,7 @@
 import os
 import sys
 
-try:
-    from setuptools import setup
-except ImportError:
-    from distutils.core import setup
+from setuptools import setup
 
 settings = dict()
 
@@ -27,6 +24,7 @@ settings.update(
     py_modules=['mongoify'],
     package_data={'': ['LICENSE']},
     include_package_data=True,
+    tests_require=['coverage', 'nose'],
     license=open('LICENSE').read(),
     classifiers=(
         'Development Status :: 5 - Production/Stable',
@@ -39,6 +37,8 @@ settings.update(
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3.1',
         'Programming Language :: Python :: 3.2',
+        'Programming Language :: Python :: Implementation :: CPython',
+        'Programming Language :: Python :: Implementation :: PyPy',
         'Topic :: Software Development :: Libraries :: Python Modules',
     ),
 )
