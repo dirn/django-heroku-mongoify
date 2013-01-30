@@ -17,8 +17,8 @@ Usage
 Place this code into your project's settings.py::
 
     from mongoify import mongoify
-    from pymongo import Connection
-    db = Connection(mongoify(default='mongodb://localhost'))
+    from pymongo import MongoClient
+    db = MongoClient(mongoify(default='mongodb://localhost/test')['default'])
 
 Full documentation can be found on `Read the Docs`_.
 
