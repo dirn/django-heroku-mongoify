@@ -22,8 +22,11 @@ def mongoify(default=None):
     This URI will appear twice.
 
     In the event that ``MONGO_URI`` was not found and no other URI
-    connection strings were not found, the value provided through the
+    connection strings were found, the value provided through the
     ``default`` argument will be used as the ``default`` key.
+
+    If ``default`` was no provided and no other URI connection strings
+    were found, the ``dict`` will be empty.
 
     :param default: A connection string URI for a MongoDB database.
     :type default: str.
