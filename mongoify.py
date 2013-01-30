@@ -56,14 +56,10 @@ def mongoify(default=None):
             # totally ripped this off from postgresify, except for the
             # ugly try/excepts, those are mine.)
             key = k.split('_')
-            try:
+            if 'URI' in key:
                 key.remove('URI')
-            except ValueError:
-                pass
-            try:
+            if 'URL' in key:
                 key.remove('URL')
-            except ValueError:
-                pass
             key = '_'.join(key)
 
             uris[key] = v
